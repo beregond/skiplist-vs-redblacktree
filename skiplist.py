@@ -10,12 +10,11 @@ class SkipListNode():
 		self.key = key
 		self._levels = {}
 
-	def next(level=1):
+	def next(self, level=1):
 		try:
 			return self._levels[level]
 		except KeyError:
 			return None
-
 
 	def set(self, node, level=1):
 		self._levels[level] = node
@@ -34,21 +33,22 @@ class SkipList():
 	def __init__(self, prototype=SkipListNode):
 		self._prototype = prototype
 		self._head = self._prototype(None)
+		self.head = self._head
 
 	def generateLevel(self):
 		seed = R.randint(0, 2**self.MAX_LEVEL)
-		h = 0
+		level = 0
 		found = 0
 
 		while not found:
-			h += 1
+			level += 1
 			found = seed % 2
 			seed /= 2
 
-		if h >= self.MAX_LEVEL:
-			h = self.MAX_LEVEL - 1
+		if level >= self.MAX_LEVEL:
+			level = self.MAX_LEVEL - 1
 
-		return h
+		return level
 
 	def search(self, value, forInsert=False):
 		node = self._head
@@ -57,7 +57,11 @@ class SkipList():
 			result = {}
 
 		for level in range(self._head.getLevel(), 0, -1):
-			while next = node.next(level):
+			while True:
+				next = node.next(level)
+				if not next:
+					break
+
 				if next.key > value:
 					break
 				else:
@@ -72,18 +76,15 @@ class SkipList():
 			return node
 
 	def addNode(self, node):
-		levels = self.generateLevel
+		levels = self.generateLevel()
 		nodes = self.search(node.key, True)
-		for level in range(level, 0, -1):
+		for level in range(levels, 0, -1):
 			try:
-				prevnode = nodes[level]
+				node.set(nodes[level].next(level), level)
+				nodes[level].set(node, level)
 			except KeyError:
-				prevnode = self._head
-
-			node.set(prevnode.next(), level)
-			prevnode.set(node, level)
+				self._head.set(node, level)
 
 	def addValue(self, value):
-		node = self._prototype()
-		node.key = value
+		node = self._prototype(value)
 		return self.addNode(node)
