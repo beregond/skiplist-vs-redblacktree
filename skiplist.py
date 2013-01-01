@@ -28,7 +28,7 @@ class SkipList():
 	Skip list.
 	"""
 
-	MAX_LEVEL = 16
+	MAX_LEVEL = 24
 	MAX_LEVEL_THRESHOLD = 2**MAX_LEVEL
 	head = property(fget=lambda self: self._head, doc="The head of list.")
 
@@ -38,7 +38,7 @@ class SkipList():
 		self._head = self._prototype(None)
 
 	def generateLevel(self):
-		"Generates new level with fixed probability."
+		"Generate new level with fixed probability."
 		seed = 0
 		level = 0
 		found = 0
@@ -88,7 +88,7 @@ class SkipList():
 			return False
 
 	def addNode(self, node):
-		"Adds new node to list."
+		"Add new node to list."
 		levels = self.generateLevel()
 		nodes = self.search(node.key, True)
 		for level in range(levels, 0, -1):
@@ -99,12 +99,12 @@ class SkipList():
 				self._head.set(node, level)
 
 	def insert(self, value):
-		"Adds new value to list."
+		"Add new value to list."
 		node = self._prototype(value)
 		return self.addNode(node)
 
 	def getValues(self, level=1):
-		"Returns list of nodes at specified level."
+		"Return list of nodes at specified level."
 		node = self._head
 		result = []
 		while True:
@@ -114,4 +114,3 @@ class SkipList():
 			result.append(tmp.key)
 			node = tmp
 		return result
-

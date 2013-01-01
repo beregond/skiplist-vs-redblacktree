@@ -170,4 +170,3 @@ class RedBlackTree():
 		self.printTree(node.right, depth2)
 		print tab + str(node.key)
 		self.printTree(node.left, depth2)
-
