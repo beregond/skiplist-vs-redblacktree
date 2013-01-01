@@ -1,11 +1,10 @@
-
-class Node():
+class RedBlackNode():
 	"""
 	A node of red black tree.
 	"""
 
 	def __init__(self, key):
-		"Constructor."
+		"Init."
 		self.key = key
 		self.red = False
 		self.left = None
@@ -16,7 +15,7 @@ class Node():
 		return self.key
 
 
-class Tree():
+class RedBlackTree():
 	"""
 	A red black tree.
 	"""
@@ -24,7 +23,8 @@ class Tree():
 	nil = property(fget=lambda self: self._nil, doc="The tree nil node.")
 	prototype = property(fget=lambda self: self._prototype, doc="The tree node prototype.")
 
-	def __init__(self, prototype=Node):
+	def __init__(self, prototype=RedBlackNode):
+		"Init."
 		self.prototype = prototype
 		self._nil = self.prototype(None)
 		self.root = self._nil
@@ -62,9 +62,9 @@ class Tree():
 		if node.parent == self.nil:
 			self.root = tmp
 		elif node == node.parent.left:
-			node.parent.right = tmp
-		else:
 			node.parent.left = tmp
+		else:
+			node.parent.right = tmp
 
 		tmp.right = node
 		node.parent = tmp
@@ -72,8 +72,8 @@ class Tree():
 	def fixup(self, node):
 		"Fix up the tree starting from given node."
 		while node.parent.red:
-			if node.parent == z.parent.parent.left:
-				tmp = z.parent.parent.right
+			if node.parent == node.parent.parent.left:
+				tmp = node.parent.parent.right
 				if tmp.red:
 					node.parent.red = False
 					tmp.red = False
@@ -113,7 +113,7 @@ class Tree():
 			else:
 				actual = actual.right
 
-		node._parent = parent
+		node.parent = parent
 		if parent == self.nil:
 			self.root = node
 		elif node.key < parent.key:
@@ -128,6 +128,46 @@ class Tree():
 
 	def insert(self, value):
 		"Insert value into the tree."
-		node = self.prototype()
-		node.key = value
+		node = self.prototype(value)
 		return self.insertNode(node)
+
+	def search(self, value):
+		"Search form node with given value."
+		node = self.root
+		next = node
+		while True:
+			if node.key == value:
+				break
+			elif node.key > value:
+				next = node.left
+			else:
+				next = node.right
+
+			if next == self._nil:
+				break
+
+			node = next
+
+		if node.key != value or node == self._nil:
+			return False
+		else:
+			return node
+
+	def printTree(self, node=None, depth=1):
+		"Printing tree. Usefull for test purposes only."
+		if node == None:
+			node = self.root
+
+		if node == self._nil:
+			return
+
+		tab = ''
+		for i in range(1, depth):
+			tab += ' '
+
+		depth2 = depth + 1
+
+		self.printTree(node.right, depth2)
+		print tab + str(node.key)
+		self.printTree(node.left, depth2)
+
